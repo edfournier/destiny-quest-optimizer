@@ -4,9 +4,9 @@
     "singleQuote": false,
     "jsxSingleQuote": false,
     "semi": true,
-    "trailingComma": "all",
+    "trailingComma": "none",
     "bracketSpacing": true,
     "arrowParens": "always",
-    "printWidth": 100,
+    "printWidth": 150,
     "quoteProps": "as-needed"
 }

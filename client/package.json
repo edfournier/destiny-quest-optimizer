@@ -4,13 +4,15 @@
     "private": true,
     "scripts": {
         "dev": "next dev",
+        "dev:https": "next dev --experimental-https",
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
         "format": "prettier --write ."
     },
     "dependencies": {
-        "next": "15.3.3",
+        "axios": "^1.10.0",
+        "next": "^15.3.4",
         "react": "^19.0.0",
         "react-dom": "^19.0.0"
     },
