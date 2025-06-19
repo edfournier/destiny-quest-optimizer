@@ -75,7 +75,8 @@ const handler = NextAuth({
             return token;
         },
         async session({ session, token }) {
-            // Can expose the token to the client here, but not ideal
+            // By default, session only exposes name/email/image from token to client
+            // Can expose access token, but not ideal
             console.log("Session:", session);
             console.log("Token:", token);
             return session;
