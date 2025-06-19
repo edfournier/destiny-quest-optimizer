@@ -1,7 +1,9 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-
 export default function Login() {
-    return <button onClick={() => signIn("bungie", { callbackUrl: "/dashboard" })}>Sign in with Bungie</button>;
+    function redirect() {
+        window.location.href = "/api/auth/redirect/bungie";
+    }
+
+    return <button onClick={redirect}>Sign in with Bungie</button>;
 }
