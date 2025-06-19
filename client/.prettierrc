@@ -7,6 +7,6 @@
     "trailingComma": "none",
     "bracketSpacing": true,
     "arrowParens": "always",
-    "printWidth": 150,
+    "printWidth": 120,
     "quoteProps": "as-needed"
 }
