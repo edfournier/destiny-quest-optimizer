@@ -15,9 +15,9 @@ export async function GET() {
         res.cookies.set("bungie-oauth-state", state, {
             httpOnly: true,
             secure: true,
-            path: "/api/auth/callback",
             maxAge: 180
         });
+        
         return res;
     } catch (error) {
         console.error("Auth redirect error:", error);

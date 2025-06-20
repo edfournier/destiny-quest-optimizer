@@ -9,7 +9,9 @@ export async function GET(req: NextRequest) {
         const stateParam = req.nextUrl.searchParams.get("state");
         if (!stateCookie || !stateParam || stateCookie.value !== stateParam) {
             console.error("OAuth state mismatch");
-            return NextResponse.redirect(`${process.env.BASE_NEXT_URL}/login`);
+            const res =  NextResponse.redirect(`${process.env.BASE_NEXT_URL}/login`)
+            res.cookies.delete("bungie-oauth-state");
+            return res;
         }
 
         // Fetch user info
@@ -28,18 +30,20 @@ export async function GET(req: NextRequest) {
             issuer: "destiny-quest-optimizer"
         });
 
-        // Set cookies and redirect
+        // Set cookies 
         const res = NextResponse.redirect(`${process.env.BASE_NEXT_URL}/dashboard`);
         const options = {
             httpOnly: true,
             secure: true,
             sameSite: "strict" as const
         };
+        res.cookies.delete("bungie-oauth-state");
         res.cookies.set("access-token", tokenInfo.access_token, options);
         res.cookies.set("access-expires-at", (Date.now() + tokenInfo.expires_in * 1000).toString(), options);
         res.cookies.set("refresh-token", tokenInfo.refresh_token, options);
         res.cookies.set("refresh-expires-at", (Date.now() + tokenInfo.refresh_expires_in * 1000).toString(), options);
-        res.cookies.set("dqo-jwt", jwt, options);
+        res.cookies.set("dqo-session-token", jwt, options);
+        
         return res;
     } catch (error) {
         console.error("Auth callback error:", error);
