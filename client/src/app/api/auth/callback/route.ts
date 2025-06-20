@@ -1,8 +1,8 @@
 import { useAuthCode, getUser } from "@/lib/bungie";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { sign } from "jsonwebtoken";
-import { redirect } from "next/navigation";
+import { makeRedirect } from "@/lib/redirect";
 
 export async function GET(req: NextRequest) {
     try {
@@ -23,7 +23,8 @@ export async function GET(req: NextRequest) {
             (membership) => membership.membershipId === user.primaryMembershipId
         )[0];
 
-        // Sign session token 
+        // Sign session token
+        // TODO: needs to be asymmetric
         const jwt = sign({ type: primaryMembership.membershipType }, process.env.JWT_SECRET_KEY!, {
             subject: primaryMembership.membershipId,
             expiresIn: "1h",
@@ -42,10 +43,10 @@ export async function GET(req: NextRequest) {
         cookieStore.set("refresh-token", refreshToken, cookieOptions);
         cookieStore.set("refresh-expires-at", (Date.now() + refreshExpiresIn * 1000).toString(), cookieOptions);
         cookieStore.set("dqo-session-token", jwt, cookieOptions);
-        
-        return NextResponse.redirect(`${process.env.NEXT_BASE_URL}/dashboard`);
+
+        return makeRedirect("/dashboard");
     } catch (error) {
         console.error("Auth callback error:", error);
-        return NextResponse.redirect(`${process.env.NEXT_BASE_URL}/login`);
+        return makeRedirect("/login");
     }
 }

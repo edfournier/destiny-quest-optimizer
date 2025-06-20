@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import crypto from "crypto";
-import { NextResponse } from "next/server";
+import { makeRedirect } from "@/lib/redirect";
 
 export async function GET() {
     try {
@@ -21,10 +21,9 @@ export async function GET() {
         });
 
         // Redirect to Bungie OAuth
-        return NextResponse.redirect(url.toString());
-
+        return makeRedirect(url.toString());
     } catch (error) {
         console.error("Auth redirect error:", error);
-        return NextResponse.redirect(`${process.env.NEXT_BASE_URL}/login`);
+        return makeRedirect("/login");
     }
 }
