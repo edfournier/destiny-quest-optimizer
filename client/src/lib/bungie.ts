@@ -1,9 +1,9 @@
 export interface BungieTokenResponse {
-    token_type: string;
-    access_token: string;
-    expires_in: number;
-    refresh_token: string;
-    refresh_expires_in: number;
+    tokenType: string;
+    accessToken: string;
+    expiresIn: number;
+    refreshToken: string;
+    refreshExpiresIn: number;
 }
 
 export interface BungieUserResponse {
@@ -33,7 +33,13 @@ export async function useRefreshToken(token: string): Promise<BungieTokenRespons
         })
     });
     const data = await response.json();
-    return data;
+    return {
+        tokenType: data.token_type,
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+        refreshToken: data.refresh_token,
+        refreshExpiresIn: data.refresh_expires_in
+    };
 }
 
 /*
@@ -54,7 +60,13 @@ export async function useAuthCode(code: string): Promise<BungieTokenResponse> {
         })
     });
     const data = await response.json();
-    return data;
+    return {
+        tokenType: data.token_type,
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+        refreshToken: data.refresh_token,
+        refreshExpiresIn: data.refresh_expires_in
+    };
 }
 
 export async function getUser(token: string): Promise<BungieUserResponse> {
