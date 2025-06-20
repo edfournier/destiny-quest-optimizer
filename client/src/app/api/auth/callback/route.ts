@@ -1,5 +1,6 @@
 import { useAuthCode, getUser } from "@/lib/bungie";
 import { NextRequest, NextResponse } from "next/server";
+import { sign } from "jsonwebtoken";
 
 export async function GET(req: NextRequest) {
     try {
@@ -19,7 +20,13 @@ export async function GET(req: NextRequest) {
             (membership) => membership.membershipId === user.primaryMembershipId
         )[0];
 
-        // TODO: sign JWT with user ID
+        // Sign JWT with user info
+        const jwt = sign({ type: primaryMembership.membershipType }, process.env.JWT_SECRET!, {
+            subject: primaryMembership.membershipId,
+            expiresIn: "1h",
+            algorithm: "HS256",
+            issuer: "destiny-quest-optimizer"
+        });
 
         // Set cookies and redirect
         const res = NextResponse.redirect(`${process.env.BASE_NEXT_URL}/dashboard`);
@@ -32,8 +39,7 @@ export async function GET(req: NextRequest) {
         res.cookies.set("access-expires-at", (Date.now() + tokenInfo.expires_in * 1000).toString(), options);
         res.cookies.set("refresh-token", tokenInfo.refresh_token, options);
         res.cookies.set("refresh-expires-at", (Date.now() + tokenInfo.refresh_expires_in * 1000).toString(), options);
-        res.cookies.set("membership-id", primaryMembership.membershipId, options);
-        res.cookies.set("membership-type", primaryMembership.membershipType.toString(), options);
+        res.cookies.set("dqo-jwt", jwt, options);
         return res;
     } catch (error) {
         console.error("Auth callback error:", error);
