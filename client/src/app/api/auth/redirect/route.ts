@@ -20,7 +20,6 @@ export async function GET() {
             path: "/api/auth/callback"
         });
 
-        // Redirect to Bungie OAuth
         return makeRedirect(url.toString());
     } catch (error) {
         console.error("Auth redirect error:", error);
