@@ -25,12 +25,16 @@ export async function GET(req: NextRequest) {
 
         // Sign session token
         // TODO: needs to be asymmetric
-        const jwt = sign({ type: primaryMembership.membershipType }, process.env.JWT_SECRET_KEY!, {
-            subject: primaryMembership.membershipId,
-            expiresIn: "1h",
-            algorithm: "HS256",
-            issuer: "destiny-quest-optimizer"
-        });
+        const jwt = sign(
+            { name: user.bungieNetUser.displayName, type: primaryMembership.membershipType },
+            process.env.JWT_SECRET_KEY!,
+            {
+                subject: primaryMembership.membershipId,
+                expiresIn: "1h",
+                algorithm: "HS256",
+                issuer: "destiny-quest-optimizer"
+            }
+        );
 
         // Set cookies
         const cookieOptions = {
