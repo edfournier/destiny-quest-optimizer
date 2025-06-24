@@ -96,3 +96,13 @@ export async function getCharacters(token: string, membershipId: string, members
     const data = await response.json();
     return data.Response;
 }
+
+export async function getManifest(): Promise<any> {
+    const response = await fetch(`https://www.bungie.net/Platform/Destiny2/Manifest/`, {
+        headers: {
+            "X-API-KEY": process.env.NEXT_PUBLIC_API_KEY!
+        }
+    });
+    const data = await response.json();
+    return data.Response;
+}

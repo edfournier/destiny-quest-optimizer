@@ -12,6 +12,7 @@
     "dependencies": {
         "@tanstack/react-query": "^5.80.7",
         "@types/jsonwebtoken": "^9.0.10",
+        "dexie": "^4.0.11",
         "jsonwebtoken": "^9.0.2",
         "next": "^15.3.4",
         "next-auth": "^4.24.11",
