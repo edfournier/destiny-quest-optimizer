@@ -42,10 +42,6 @@ export async function useRefreshToken(token: string): Promise<BungieTokenRespons
     };
 }
 
-/*
- * Below are unused legacy helper functions from when I was implementing auth myself
- */
-
 export async function useAuthCode(code: string): Promise<BungieTokenResponse> {
     const response = await fetch("https://www.bungie.net/Platform/App/OAuth/token/", {
         method: "POST",
