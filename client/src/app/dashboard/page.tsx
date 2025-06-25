@@ -1,19 +1,22 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useDefinitions } from "@/hooks/use-definitions";
+import { useSession } from "@/hooks/use-session";
 
 export default function Dashboard() {
-    const { data: session, status } = useSession();
+    // const { session, loading, error } = useSession();
+    // if (loading) return <div>Loading...</div>;
+    // if (error) return <div>Error: {error.message}</div>;
 
-    if (status === "loading") {
-        return <p>Loading...</p>;
-    }
+    const definitions = useDefinitions();
 
-    console.log("session:", session, status);
+    if (!definitions) return <div>Loading...</div>;
+
+    console.log(definitions);
 
     return (
         <div>
-            <p>Welcome {session?.user?.name}!</p>
+            <p>Welcome!</p>
         </div>
     );
 }
