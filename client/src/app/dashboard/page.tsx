@@ -1,6 +1,6 @@
 "use client";
 
-import { useDefinitions } from "@/hooks/use-database";
+import { useDefinitions } from "@/hooks/use-definitions";
 import { useSession } from "@/hooks/use-session";
 
 export default function Dashboard() {

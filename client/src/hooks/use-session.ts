@@ -14,7 +14,7 @@ export function useSession() {
     useEffect(() => {
         async function fetchSession() {
             try {
-                const response = await fetch("/api/auth/session", {
+                const response = await fetch("/api/bungie/auth/session", {
                     credentials: "include"
                 });
                 if (!response.ok) {

@@ -17,7 +17,7 @@ export async function GET() {
             httpOnly: true,
             secure: true,
             maxAge: 180,
-            path: "/api/auth/callback"
+            path: "/api/bungie/auth/callback"
         });
 
         return makeRedirect(url.toString());
