@@ -7,7 +7,7 @@ export async function GET() {
         // Build redirect URL
         const state = crypto.randomBytes(16).toString("hex");
         const url = new URL(`https://www.bungie.net/en/OAuth/Authorize`);
-        url.searchParams.set("client_id", process.env.NEXT_PUBLIC_BUNGIE_CLIENT_ID!);
+        url.searchParams.set("client_id", process.env.BUNGIE_CLIENT_ID!);
         url.searchParams.set("response_type", "code");
         url.searchParams.set("state", state);
 

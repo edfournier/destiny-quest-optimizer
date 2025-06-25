@@ -26,7 +26,7 @@ export async function useRefreshToken(token: string): Promise<BungieTokenRespons
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: new URLSearchParams({
-            client_id: process.env.NEXT_PUBLIC_BUNGIE_CLIENT_ID!,
+            client_id: process.env.BUNGIE_CLIENT_ID!,
             client_secret: process.env.BUNGIE_CLIENT_SECRET!,
             refresh_token: token,
             grant_type: "refresh_token"
@@ -53,7 +53,7 @@ export async function useAuthCode(code: string): Promise<BungieTokenResponse> {
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: new URLSearchParams({
-            client_id: process.env.NEXT_PUBLIC_BUNGIE_CLIENT_ID!,
+            client_id: process.env.BUNGIE_CLIENT_ID!,
             client_secret: process.env.BUNGIE_CLIENT_SECRET!,
             code,
             grant_type: "authorization_code"
