@@ -33,7 +33,7 @@ export function useSession() {
                 setLoading(false);
             }
         }
-        
+
         fetchSession();
     }, []);
 

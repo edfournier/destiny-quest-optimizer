@@ -5,8 +5,8 @@ import { getManifest } from "@/lib/bungie";
 export class Database extends Dexie {
     private definitions!: Table;
     private readonly keys: string[] = [
-        "DestinyInventoryItemDefinition", 
-        "DestinyObjectiveDefinition", 
+        "DestinyInventoryItemDefinition",
+        "DestinyObjectiveDefinition",
         "DestinyRecordDefinition"
     ];
 
@@ -18,30 +18,30 @@ export class Database extends Dexie {
     async build(): Promise<this> {
         const manifest = await getManifest();
 
-        await Promise.all(this.keys.map(async (key) => {
-            const path = manifest.jsonWorldComponentContentPaths.en[key];
-            const cached = localStorage.getItem(`path-${key}`);
-            if (path === cached) {
-                return;
-            }
+        await Promise.all(
+            this.keys.map(async (key) => {
+                const path = manifest.jsonWorldComponentContentPaths.en[key];
+                const cached = localStorage.getItem(`path-${key}`);
+                if (path === cached) {
+                    return;
+                }
 
-            // Refresh definitions for this key
-            localStorage.setItem(`path-${key}`, path);
-            const response = await fetch(`https://www.bungie.net${path}`);
-            const definitions = await response.json();
-            return this.definitions.put({ 
-                key: key, 
-                value: definitions 
-            });
-        }));
-        
+                // Refresh definitions for this key
+                localStorage.setItem(`path-${key}`, path);
+                const response = await fetch(`https://www.bungie.net${path}`);
+                const definitions = await response.json();
+                return this.definitions.put({
+                    key: key,
+                    value: definitions
+                });
+            })
+        );
+
         return this;
     }
 
     async getDefinitions(): Promise<Record<string, any>> {
-        const definitions = await Promise.all(
-            this.keys.map((key) => this.definitions.get(key))
-        );
+        const definitions = await Promise.all(this.keys.map((key) => this.definitions.get(key)));
 
         return definitions.reduce((acc, e) => {
             acc[e.key] = e.value;
