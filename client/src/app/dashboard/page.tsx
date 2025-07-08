@@ -2,21 +2,22 @@
 
 import { useDefinitions } from "@/hooks/use-definitions";
 import { useSession } from "@/hooks/use-session";
+import { useEffect } from "react";
 
 export default function Dashboard() {
-    // const { session, loading, error } = useSession();
-    // if (loading) return <div>Loading...</div>;
-    // if (error) return <div>Error: {error.message}</div>;
+    const { definitions, loading: definitionsLoading } = useDefinitions();
+    const { session, loading: sessionLoading } = useSession();
 
-    const definitions = useDefinitions();
+    if (definitionsLoading || sessionLoading) {
+        return <div>Loading...</div>;
+    }
 
-    if (!definitions) return <div>Loading...</div>;
-
+    console.log(session);
     console.log(definitions);
 
     return (
         <div>
-            <p>Welcome!</p>
+            <p>Welcome {session?.name}!</p>
         </div>
     );
 }

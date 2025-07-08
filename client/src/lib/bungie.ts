@@ -79,20 +79,6 @@ export async function getUser(token: string): Promise<BungieUserResponse> {
     return data.Response;
 }
 
-export async function getCharacters(token: string, membershipId: string, membershipType: number): Promise<any> {
-    const response = await fetch(
-        `https://www.bungie.net/Platform/Destiny2/${membershipType}/Profile/${membershipId}/?components=200,202,205`,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "X-API-KEY": process.env.NEXT_PUBLIC_API_KEY!
-            }
-        }
-    );
-    const data = await response.json();
-    return data.Response;
-}
-
 export async function getManifest(): Promise<any> {
     const response = await fetch(`https://www.bungie.net/Platform/Destiny2/Manifest/`, {
         headers: {

@@ -12,7 +12,7 @@ export function useSession() {
     const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
-        async function fetchSession() {
+        async function effect() {
             try {
                 const response = await fetch("/api/bungie/auth/session", {
                     credentials: "include"
@@ -34,7 +34,7 @@ export function useSession() {
             }
         }
 
-        fetchSession();
+        effect();
     }, []);
 
     return { session, loading, error };

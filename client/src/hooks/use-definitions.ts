@@ -55,17 +55,28 @@ export class Database extends Dexie {
 }
 
 export function useDefinitions() {
-    const [definitions, setDefinitions] = useState<Record<string, any>>({});
+    const [definitions, setDefinitions] = useState<Record<string, any> | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
-        async function build() {
-            const db = await new Database().build();
-            const definitions = await db.getDefinitions();
-            setDefinitions(definitions);
+        async function effect() {
+            try {
+                const db = await new Database().build();
+                const definitions = await db.getDefinitions();
+                setDefinitions(definitions);
+            }
+            catch (err: any) {
+                setError(err);
+                setDefinitions(null);
+            }
+            finally {
+                setLoading(false);
+            }
         }
 
-        build();
+        effect();
     }, []);
 
-    return definitions;
+    return { definitions, loading, error };
 }
