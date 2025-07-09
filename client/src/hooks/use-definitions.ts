@@ -65,12 +65,10 @@ export function useDefinitions() {
                 const db = await new Database().build();
                 const definitions = await db.getDefinitions();
                 setDefinitions(definitions);
-            }
-            catch (err: any) {
+            } catch (err: any) {
                 setError(err);
                 setDefinitions(null);
-            }
-            finally {
+            } finally {
                 setLoading(false);
             }
         }
