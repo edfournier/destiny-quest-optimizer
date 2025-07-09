@@ -36,7 +36,6 @@ export async function GET(req: NextRequest) {
             }
         );
 
-        // Set cookies
         const cookieOptions = {
             httpOnly: true,
             secure: true,

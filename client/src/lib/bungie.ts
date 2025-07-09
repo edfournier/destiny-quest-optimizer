@@ -32,6 +32,10 @@ export async function useRefreshToken(token: string): Promise<BungieTokenRespons
             grant_type: "refresh_token"
         })
     });
+    if (!response.ok) {
+        throw new Error("Bad response from refresh token endpoint");
+    }
+
     const data = await response.json();
     return {
         tokenType: data.token_type,
@@ -55,6 +59,10 @@ export async function useAuthCode(code: string): Promise<BungieTokenResponse> {
             grant_type: "authorization_code"
         })
     });
+    if (!response.ok) {
+        throw new Error("Bad response from token endpoint");
+    }
+
     const data = await response.json();
     return {
         tokenType: data.token_type,
@@ -75,16 +83,16 @@ export async function getUser(token: string): Promise<BungieUserResponse> {
     if (!response.ok) {
         throw new Error("Bad response from GetMembershipsForCurrentUser");
     }
+
     const data = await response.json();
     return data.Response;
 }
 
 export async function getManifest(): Promise<any> {
-    const response = await fetch(`https://www.bungie.net/Platform/Destiny2/Manifest/`, {
-        headers: {
-            "X-API-KEY": process.env.NEXT_PUBLIC_API_KEY!
-        }
-    });
+    const response = await fetch(`https://www.bungie.net/Platform/Destiny2/Manifest/`);
+    if (!response.ok) {
+        throw new Error("Bad response from GetManifest");
+    }
     const data = await response.json();
     return data.Response;
 }
