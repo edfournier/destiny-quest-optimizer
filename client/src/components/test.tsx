@@ -1,26 +1,20 @@
 "use client";
 
-import { Session } from "@/lib/session";
+import { User } from "@/lib/session";
 import { useQuery } from "@tanstack/react-query";
 
-export default function Test({ session }: { session: Session }) {
+export default function Test({ user }: { user: User }) {
     // TODO:
-    // - in client component, hit `https://www.bungie.net/Platform/Destiny2/${session.type}/Profile/${session.sub}/?components=CharacterInventories,Records`
-    // - in client component, call useDefinitions
+    // - call useDefinitions
     // - find and display user's bounties, seasonal challenges, etc.
 
-    const membershipId = session.user.primaryMembership?.membershipId;
-    const membershipType = session.user.primaryMembership?.membershipType;
-
-    const { data, isLoading, error, refetch } = useQuery({
+    const { data, isLoading, error } = useQuery({
         queryKey: ["profile"],
         queryFn: async () => {
             const response = await fetch(
-                `/api/bungie/Destiny2/${membershipType}/Profile/${membershipId}/?components=CharacterInventories,Records`
+                `/api/bungie/Destiny2/${user.default.membershipType}/Profile/${user.default.membershipId}/?components=CharacterInventories,Records`
             );
-            const data = await response.json();
-            console.log(data);
-            return data;
+            return response.json();
         },
         refetchOnWindowFocus: false,
         refetchOnMount: false,
@@ -29,6 +23,9 @@ export default function Test({ session }: { session: Session }) {
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
+
+    console.log(user);
+    console.log(data);
 
     return <div>{data.Message}</div>;
 }

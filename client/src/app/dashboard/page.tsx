@@ -10,11 +10,13 @@ export default async function Dashboard() {
         return <div>No session!</div>;
     }
 
-    // TODO: instead of prop drilling, use a context provider (or redux/zustland/etc.) and a useSession hook
+    // TODO:
+    // - instead of prop drilling, use a context provider (or redux/zustland/etc.) to manage session and user
+    // - provider manages which user membership is active, defaulting to user.default
     return (
         <div>
             <p>Welcome {session.user.name}!</p>
-            <Test session={session} />
+            <Test user={session.user} />
         </div>
     );
 }

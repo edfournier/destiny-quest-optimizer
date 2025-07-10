@@ -13,8 +13,8 @@ export type User = {
     id: string;
     name: string;
     image: string;
+    default: GroupUserInfoCard;
     memberships: GroupUserInfoCard[];
-    primaryMembership?: GroupUserInfoCard;
 };
 
 export function decodeSessionToken(token: string): Session | null {

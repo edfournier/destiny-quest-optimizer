@@ -28,11 +28,13 @@ export async function GET(req: NextRequest) {
             name: bungieNetUser.displayName,
             image: bungieNetUser.profilePicturePath,
             memberships: destinyMemberships,
-            primaryMembership: destinyMemberships.find((membership) => membership.membershipId === primaryMembershipId)
+            default:
+                destinyMemberships.find((membership) => membership.membershipId === primaryMembershipId) ||
+                destinyMemberships[0]
         };
 
         // Create session token
-        // TODO: should be asymmetric so the Spring server can use them
+        // TODO: should be asymmetric so the Spring Boot server can use them
         const jwt = sign({ user }, process.env.JWT_SECRET_KEY!, {
             subject: bungieNetUser.membershipId,
             expiresIn: "1h",
