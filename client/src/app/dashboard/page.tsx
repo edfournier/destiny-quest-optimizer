@@ -1,40 +1,26 @@
-"use client";
+import { fetchWithAuth } from "@/lib/bungie-auth";
+import { decodeSessionToken } from "@/lib/decode";
+import { cookies } from "next/headers";
 
-import { useSession } from "@/hooks/use-session";
-import { useDefinitions } from "@/hooks/use-definitions";
-import { useQuery } from "@tanstack/react-query";
-
-export default function Dashboard() {
-    // TODO: handle errors from here
-    const { data: session, isLoading: sessionLoading } = useSession();
-    const { data: definitions, isLoading: definitionsLoading } = useDefinitions();
-
-    // TODO: display users current bounties, need to use definitions and filter below
-    const { data: profile, isLoading: profileLoading } = useQuery({
-        queryKey: ["profile"],
-        queryFn: async () => {
-            const response = await fetch(
-                `/api/bungie/Destiny2/${session!.type}/Profile/${session!.sub}/?components=CharacterInventories,Records`
-            );
-            if (!response.ok) {
-                throw new Error("Failed to fetch profile data");
-            }
-            return response.json();
-        },
-        enabled: !sessionLoading
-    });
-
-    if (definitionsLoading || sessionLoading || profileLoading) {
-        return <div>Loading...</div>;
+export default async function Dashboard() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("access-token")?.value;
+    const session = decodeSessionToken(cookieStore.get("dqo-session-token")?.value || "");
+    if (!token || !session) {
+        return <div>No session found</div>;
     }
 
+    const profile = await fetchWithAuth(
+        token,
+        `https://www.bungie.net/Platform/Destiny2/${session.type}/Profile/${session.sub}/?components=CharacterInventories,Records`
+    );
+
     console.log(session);
-    console.log(definitions);
     console.log(profile);
 
     return (
         <div>
-            <p>Welcome {session?.name}!</p>
+            <p>Welcome {session.name}!</p>
         </div>
     );
 }

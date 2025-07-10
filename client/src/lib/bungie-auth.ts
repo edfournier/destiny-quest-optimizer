@@ -1,4 +1,5 @@
 import { BungieTokenResponse, BungieUserResponse } from "@/types/bungie";
+import { cookies } from "next/headers";
 
 export async function useRefreshToken(token: string): Promise<BungieTokenResponse> {
     const response = await fetch(`https://www.bungie.net/Platform/App/OAuth/token/`, {
@@ -54,17 +55,22 @@ export async function useAuthCode(code: string): Promise<BungieTokenResponse> {
     };
 }
 
-export async function getUser(token: string): Promise<BungieUserResponse> {
-    const response = await fetch(`https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/`, {
+export async function fetchWithAuth(token: string, url: string, options: RequestInit = {}) {
+    const response = await fetch(url, {
+        ...options,
         headers: {
+            "X-API-KEY": process.env.BUNGIE_API_KEY!,
             Authorization: `Bearer ${token}`,
-            "X-API-KEY": process.env.BUNGIE_API_KEY!
+            ...options.headers
         }
     });
     if (!response.ok) {
-        throw new Error("Bad response from GetMembershipsForCurrentUser");
+        throw new Error(`Bad response from fetchWithAuth on ${url}`);
     }
+    return response.json();
+}
 
-    const data = await response.json();
+export async function getUser(token: string): Promise<BungieUserResponse> {
+    const data = await fetchWithAuth(token, `https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/`);
     return data.Response;
 }

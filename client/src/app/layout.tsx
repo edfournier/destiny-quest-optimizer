@@ -1,10 +1,5 @@
 import "./globals.css";
-import { QueryProvider } from "@/app/providers/query-provider";
-
-export const metadata = {
-    title: "Destiny Quest Optimizer",
-    description: "Optimize your Guardian's journey through Destiny 2 quests and activities"
-};
+import { QueryProvider } from "@/providers/query-provider";
 
 export default function RootLayout({
     children

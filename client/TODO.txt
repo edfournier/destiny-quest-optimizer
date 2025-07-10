@@ -1,6 +1,5 @@
-1. add middleware to prevent unauth users from accessing routes that require auth
-2. add error handling, loading, retries for react query
-3. refactor to server components when better? 
-4. ErrorBoundary?
-5. Better loading screens (don't really like skeleton UI)
-6. Turn on strict mode
+- add middleware to redirect unauthed users from accessing routes that require auth
+- add error handling, loading, retries for react query (e.g. for manifest-DB)
+- loading components
+- error components
+- refresh tokens
