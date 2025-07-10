@@ -1,5 +1,13 @@
-import { BungieTokenResponse, BungieUserResponse } from "@/types/bungie";
-import { cookies } from "next/headers";
+import { UserMembershipData } from "bungie-api-ts/user";
+
+export type BungieTokenResponse = {
+    token_type: string;
+    access_token: string;
+    expires_in: number;
+    refresh_token: string;
+    refresh_expires_in: number;
+    membership_id: string; // Bungie.net membership ID
+};
 
 export async function useRefreshToken(token: string): Promise<BungieTokenResponse> {
     const response = await fetch(`https://www.bungie.net/Platform/App/OAuth/token/`, {
@@ -17,15 +25,7 @@ export async function useRefreshToken(token: string): Promise<BungieTokenRespons
     if (!response.ok) {
         throw new Error("Bad response from refresh token endpoint");
     }
-
-    const data = await response.json();
-    return {
-        tokenType: data.token_type,
-        accessToken: data.access_token,
-        expiresIn: data.expires_in,
-        refreshToken: data.refresh_token,
-        refreshExpiresIn: data.refresh_expires_in
-    };
+    return response.json();
 }
 
 export async function useAuthCode(code: string): Promise<BungieTokenResponse> {
@@ -44,15 +44,7 @@ export async function useAuthCode(code: string): Promise<BungieTokenResponse> {
     if (!response.ok) {
         throw new Error("Bad response from token endpoint");
     }
-
-    const data = await response.json();
-    return {
-        tokenType: data.token_type,
-        accessToken: data.access_token,
-        expiresIn: data.expires_in,
-        refreshToken: data.refresh_token,
-        refreshExpiresIn: data.refresh_expires_in
-    };
+    return response.json();
 }
 
 export async function fetchWithAuth(token: string, url: string, options: RequestInit = {}) {
@@ -70,7 +62,7 @@ export async function fetchWithAuth(token: string, url: string, options: Request
     return response.json();
 }
 
-export async function getUser(token: string): Promise<BungieUserResponse> {
+export async function getMemberships(token: string): Promise<UserMembershipData> {
     const data = await fetchWithAuth(token, `https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/`);
     return data.Response;
 }

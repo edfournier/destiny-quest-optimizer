@@ -1,5 +1,5 @@
 import Test from "@/components/Test";
-import { decodeSessionToken } from "@/lib/decode";
+import { decodeSessionToken } from "@/lib/session";
 import { cookies } from "next/headers";
 
 export default async function Dashboard() {
@@ -10,12 +10,10 @@ export default async function Dashboard() {
         return <div>No session!</div>;
     }
 
-    console.log(session);
-
     // TODO: instead of prop drilling, use a context provider (or redux/zustland/etc.) and a useSession hook
     return (
         <div>
-            <p>Welcome {session.name}!</p>
+            <p>Welcome {session.user.name}!</p>
             <Test session={session} />
         </div>
     );

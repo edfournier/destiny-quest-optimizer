@@ -1,6 +1,6 @@
 "use client";
 
-import { Session } from "@/types/session";
+import { Session } from "@/lib/session";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Test({ session }: { session: Session }) {
@@ -9,11 +9,14 @@ export default function Test({ session }: { session: Session }) {
     // - in client component, call useDefinitions
     // - find and display user's bounties, seasonal challenges, etc.
 
+    const membershipId = session.user.primaryMembership?.membershipId;
+    const membershipType = session.user.primaryMembership?.membershipType;
+
     const { data, isLoading, error, refetch } = useQuery({
         queryKey: ["profile"],
         queryFn: async () => {
             const response = await fetch(
-                `/api/bungie/Destiny2/${session.type}/Profile/${session.sub}/?components=CharacterInventories,Records`
+                `/api/bungie/Destiny2/${membershipType}/Profile/${membershipId}/?components=CharacterInventories,Records`
             );
             const data = await response.json();
             console.log(data);
