@@ -1,23 +1,4 @@
-export interface BungieTokenResponse {
-    tokenType: string;
-    accessToken: string;
-    expiresIn: number;
-    refreshToken: string;
-    refreshExpiresIn: number;
-}
-
-export interface BungieUserResponse {
-    primaryMembershipId: string;
-    profilePicturePath: string;
-    bungieNetUser: {
-        uniqueName: string;
-        displayName: string;
-    };
-    destinyMemberships: {
-        membershipId: string;
-        membershipType: number;
-    }[];
-}
+import { BungieTokenResponse, BungieUserResponse } from "@/types/bungie";
 
 export async function useRefreshToken(token: string): Promise<BungieTokenResponse> {
     const response = await fetch(`https://www.bungie.net/Platform/App/OAuth/token/`, {
@@ -84,15 +65,6 @@ export async function getUser(token: string): Promise<BungieUserResponse> {
         throw new Error("Bad response from GetMembershipsForCurrentUser");
     }
 
-    const data = await response.json();
-    return data.Response;
-}
-
-export async function getManifest(): Promise<any> {
-    const response = await fetch(`https://www.bungie.net/Platform/Destiny2/Manifest/`);
-    if (!response.ok) {
-        throw new Error("Bad response from GetManifest");
-    }
     const data = await response.json();
     return data.Response;
 }

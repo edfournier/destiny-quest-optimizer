@@ -1,4 +1,4 @@
-import { useAuthCode, getUser } from "@/lib/bungie";
+import { useAuthCode, getUser } from "@/lib/bungie-auth";
 import { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { sign } from "jsonwebtoken";

@@ -1,24 +1,31 @@
 "use client";
 
-import { useDefinitions } from "@/hooks/use-definitions";
+import { useEffect, useState } from "react";
 import { useSession } from "@/hooks/use-session";
-import { useEffect } from "react";
+import { useDefinitions } from "@/hooks/use-definitions";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Dashboard() {
-    const { definitions, loading: definitionsLoading } = useDefinitions();
-    const { session, loading: sessionLoading } = useSession();
+    // TODO: handle errors from here
+    const { data: session, isLoading: sessionLoading } = useSession();
+    const { data: definitions, isLoading: definitionsLoading } = useDefinitions();
 
-    // TODO: remove this test
-    useEffect(() => {
-        if (session) {
-            fetch(`/api/bungie/Destiny2/${session.type}/Profile/${session.sub}/?components=201`)
-                .then((res) => res.json())
-                .then((data) => console.log(data))
-                .catch((err) => console.error(err));
-        }
-    }, [sessionLoading]);
+    // TODO: display users current bounties, need to use definitions and filter below
+    const { data: profile, isLoading: profileLoading } = useQuery({
+        queryKey: ["profile"],
+        queryFn: async () => {
+            const response = await fetch(
+                `/api/bungie/Destiny2/${session!.type}/Profile/${session!.sub}/?components=CharacterInventories,Records`
+            );
+            if (!response.ok) {
+                throw new Error("Failed to fetch profile data");
+            }
+            return response.json();
+        },
+        enabled: !sessionLoading
+    });
 
-    if (definitionsLoading || sessionLoading) {
+    if (definitionsLoading || sessionLoading || profileLoading) {
         return <div>Loading...</div>;
     }
 
