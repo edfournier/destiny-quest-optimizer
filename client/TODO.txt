@@ -1,5 +1,0 @@
-- add middleware to redirect unauthed users from accessing routes that require auth
-- add error handling, loading, retries for react query (e.g. for manifest-DB)
-- loading components
-- error components
-- refresh tokens

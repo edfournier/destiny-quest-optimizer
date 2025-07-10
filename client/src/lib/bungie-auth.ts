@@ -9,6 +9,7 @@ export type BungieTokenResponse = {
     membership_id: string; // Bungie.net membership ID
 };
 
+// TODO: actually use this function
 export async function useRefreshToken(token: string): Promise<BungieTokenResponse> {
     const response = await fetch(`https://www.bungie.net/Platform/App/OAuth/token/`, {
         method: "POST",

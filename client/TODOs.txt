@@ -1,0 +1,4 @@
+TODO: add middleware to redirect unauthed users from accessing routes that require auth
+TODO: add error handling, loading, retries for all react queries calls
+TODO: loading components
+TODO: error components
