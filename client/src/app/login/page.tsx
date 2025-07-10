@@ -7,7 +7,7 @@ export default function Login() {
 
     const handleLogin = () => {
         setIsLoading(true);
-        window.location.href = "/api/bungie/auth/redirect";
+        window.location.href = "/api/auth/redirect";
     };
 
     return (

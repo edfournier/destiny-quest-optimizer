@@ -3,7 +3,7 @@ import { Session } from "@/types/session";
 import ms from "ms";
 
 export async function getSession(): Promise<Session> {
-    const response = await fetch("/api/bungie/auth/session", { credentials: "include" });
+    const response = await fetch("/api/auth/session", { credentials: "include" });
     if (!response.ok) {
         throw new Error("Failed to fetch session");
     }

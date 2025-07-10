@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useSession } from "@/hooks/use-session";
 import { useDefinitions } from "@/hooks/use-definitions";
 import { useQuery } from "@tanstack/react-query";
@@ -31,6 +30,7 @@ export default function Dashboard() {
 
     console.log(session);
     console.log(definitions);
+    console.log(profile);
 
     return (
         <div>
