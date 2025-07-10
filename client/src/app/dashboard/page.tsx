@@ -12,7 +12,8 @@ export default async function Dashboard() {
 
     // TODO:
     // - instead of prop drilling, use a context provider (or redux/zustland/etc.) to manage session and user
-    // - provider manages which user membership is active, defaulting to user.default
+    // - provider manages which user membership is active
+    // - maybe better if provider manages default, backend just provides primaryMembershipId
     return (
         <div>
             <p>Welcome {session.user.name}!</p>

@@ -1,31 +1,24 @@
 "use client";
 
+import { useDefinitions } from "@/hooks/use-definitions";
+import { useProfile } from "@/hooks/use-profile";
 import { User } from "@/lib/session";
-import { useQuery } from "@tanstack/react-query";
 
 export default function Test({ user }: { user: User }) {
-    // TODO:
-    // - call useDefinitions
-    // - find and display user's bounties, seasonal challenges, etc.
+    // TODO: find and display user's bounties, seasonal challenges, etc by cross-referencing profile and definitions
 
-    const { data, isLoading, error } = useQuery({
-        queryKey: ["profile"],
-        queryFn: async () => {
-            const response = await fetch(
-                `/api/bungie/Destiny2/${user.default.membershipType}/Profile/${user.default.membershipId}/?components=CharacterInventories,Records`
-            );
-            return response.json();
-        },
-        refetchOnWindowFocus: false,
-        refetchOnMount: false,
-        refetchInterval: false
-    });
+    const profile = useProfile(user.default.membershipId, user.default.membershipType);
+    const definitions = useDefinitions();
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error.message}</div>;
+    if (profile.isLoading || definitions.isLoading) {
+        return <div>Loading...</div>;
+    }
+    if (profile.error || definitions.error) {
+        return <div>Error: {profile.error?.message || definitions.error?.message}</div>;
+    }
 
-    console.log(user);
-    console.log(data);
+    console.log(profile.data);
+    console.log(definitions.data);
 
-    return <div>{data.Message}</div>;
+    return <div>{profile.data.Message}</div>;
 }
