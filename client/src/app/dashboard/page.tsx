@@ -1,3 +1,4 @@
+import Test from "@/components/Test";
 import { decodeSessionToken } from "@/lib/decode";
 import { cookies } from "next/headers";
 
@@ -11,14 +12,11 @@ export default async function Dashboard() {
 
     console.log(session);
 
-    // TODO:
-    // - in client component, hit `https://www.bungie.net/Platform/Destiny2/${session.type}/Profile/${session.sub}/?components=CharacterInventories,Records`
-    // - in client component, call useDefinitions
-    // - find and display user's bounties, seasonal challenges, etc. 
-
+    // TODO: instead of prop drilling, use a context provider (or redux/zustland/etc.) and a useSession hook
     return (
         <div>
             <p>Welcome {session.name}!</p>
+            <Test session={session} />
         </div>
     );
 }
