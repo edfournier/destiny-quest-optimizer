@@ -1,55 +1,61 @@
-import { DestinyManifest } from "bungie-api-ts/destiny2";
+import { AllDestinyManifestComponents, DestinyManifest } from "bungie-api-ts/destiny2";
 import Dexie, { Table } from "dexie";
 
+// Subset of manifest components relevant to the app
+const keys = [
+    "DestinyInventoryItemDefinition",
+    "DestinyObjectiveDefinition",
+    "DestinyRecordDefinition"
+] as const;
+export type ComponentKeys = typeof keys[number];
+export type ManifestDefinitions = Pick<AllDestinyManifestComponents, ComponentKeys>;
+
+// TODO: this being a class isn't really beneficial, probably change to functions
 class ManifestDB extends Dexie {
-    private definitions!: Table;
-    private keys: string[] = [
-        "DestinyInventoryItemDefinition",
-        "DestinyObjectiveDefinition",
-        "DestinyRecordDefinition"
-    ];
+    private manifest!: Table;
 
     constructor() {
         super("destiny-quest-optimizer");
-        this.version(1).stores({ definitions: "key" });
+        this.version(1).stores({ manifest: "" });
     }
 
-    async getLatestManifest(): Promise<DestinyManifest> {
+    async build(): Promise<this> {
+        // Fetch latest manifest
         const response = await fetch(`https://www.bungie.net/Platform/Destiny2/Manifest/`);
         if (!response.ok) {
             throw new Error("Bad response from GetManifest");
         }
         const data = await response.json();
-        return data.Response;
-    }
+        const manifest: DestinyManifest = data.Response;
 
-    async build(): Promise<this> {
-        const manifest = await this.getLatestManifest();
-        console.log(`Fetched manifest (version: ${manifest.version})`);
-        if (manifest.version === localStorage.getItem("manifest-version")) {
+        // Don't check manifest.version since Bungie doesn't always update it
+        // TODO: maybe check manifest is in tact, e.g. all keys present
+        const version = manifest.jsonWorldContentPaths.en;
+        console.log(`Fetched manifest (version: ${version})`);
+        if (version === localStorage.getItem("manifest-version")) {
             return this;
         }
-        localStorage.setItem("manifest-version", manifest.version);
+        localStorage.setItem("manifest-version", version);
 
-        // Refresh cached definitions for desired keys
+        // Refresh IDB with latest definitions
         await Promise.all(
-            this.keys.map(async (key) => {
-                const path = manifest.jsonWorldComponentContentPaths.en[key];
-                localStorage.setItem(`path-${key}`, path);
+            keys.map(async (keys) => {
+                const path = manifest.jsonWorldComponentContentPaths.en[keys];
                 const response = await fetch(`https://www.bungie.net${path}`);
-                const definitions = await response.json();
-                return this.definitions.put({ key, value: definitions });
+                const definition = await response.json();
+                return this.manifest.put(definition, keys);
             })
         );
         return this;
     }
 
-    async getDefinitions(): Promise<Record<string, any>> {
-        const definitions = await Promise.all(this.keys.map((key) => this.definitions.get(key)));
-        return definitions.reduce((acc, e) => {
-            acc[e.key] = e.value;
-            return acc;
-        }, {});
+    async getDefinitions(): Promise<ManifestDefinitions> {
+        const values = await this.manifest.bulkGet([...keys]);
+        const definitions = {} as ManifestDefinitions;
+        for (let i = 0; i < values.length; i++) {
+            definitions[keys[i]] = values[i];
+        }
+        return definitions;
     }
 }
 
