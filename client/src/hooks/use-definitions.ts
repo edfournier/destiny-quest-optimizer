@@ -1,14 +1,24 @@
 import ms from "ms";
 import { useQuery } from "@tanstack/react-query";
-import { manifestDB, ManifestDefinitions } from "@/lib/manifest-db";
+import { dexie, Definitions, keys } from "@/lib/dexie";
+
+export async function getDefinitions() {
+    // TODO: fix the typing on definitions
+    const records = await dexie.definitions.bulkGet([...keys]);
+    const definitions = {} as any;
+    for (const record of records) {
+        if (!record) {
+            throw new Error("Failed to get definitions");
+        }
+        definitions[record.key] = record.value;
+    }
+    return definitions as Definitions;
+}
 
 export function useDefinitions() {
-    return useQuery<ManifestDefinitions, Error>({
+    return useQuery<Definitions, Error>({
         queryKey: ["definitions"],
-        queryFn: async () => {
-            const db = await manifestDB.build();
-            return db.getDefinitions();
-        },
+        queryFn: getDefinitions,
         staleTime: ms("24h")
     });
 }
