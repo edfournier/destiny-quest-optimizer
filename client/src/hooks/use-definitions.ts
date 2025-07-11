@@ -3,16 +3,15 @@ import { useQuery } from "@tanstack/react-query";
 import { dexie, Definitions, keys } from "@/lib/dexie";
 
 export async function getDefinitions() {
-    // TODO: fix the typing on definitions
     const records = await dexie.definitions.bulkGet([...keys]);
-    const definitions = {} as any;
+    const definitions = {} as Definitions;
     for (const record of records) {
         if (!record) {
             throw new Error("Failed to get definitions");
         }
-        definitions[record.key] = record.value;
+        definitions[record.key] = record.value as any;
     }
-    return definitions as Definitions;
+    return definitions;
 }
 
 export function useDefinitions() {

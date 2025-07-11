@@ -4,9 +4,11 @@ import { cookies } from "next/headers";
 
 export default async function Dashboard() {
     const cookieStore = await cookies();
+    console.log("All cookies:", cookieStore.getAll());
     const token = cookieStore.get("dqo-session-token")?.value;
     const session = token ? decodeSessionToken(token) : null;
     if (!session) {
+        console.log(token);
         return <div>No session!</div>;
     }
 

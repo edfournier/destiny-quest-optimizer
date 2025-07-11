@@ -19,6 +19,6 @@ export default function Test({ user }: { user: User }) {
 
     console.log(profile.data);
     console.log(definitions.data);
-
+    
     return <div>{profile.data.Message}</div>;
 }

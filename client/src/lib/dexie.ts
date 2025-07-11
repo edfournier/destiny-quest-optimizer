@@ -1,22 +1,23 @@
-import { AllDestinyManifestComponents, DestinyManifest } from "bungie-api-ts/destiny2";
+import { AllDestinyManifestComponents} from "bungie-api-ts/destiny2";
 import Dexie, { Table } from "dexie";
 import { getLatestManifest } from "./bungie-requests";
 
-// TODO: fix the naming scheme for these types
-// Subset of manifest definitions relevant to the app
+// Manifest definitions relevant to the app
 export const keys = [
     "DestinyInventoryItemDefinition",
     "DestinyObjectiveDefinition",
     "DestinyRecordDefinition"
 ] as const;
 
-export type Keys = (typeof keys)[number];
+export type DefinitionKey = typeof keys[number];
 
-export type Definitions = Pick<AllDestinyManifestComponents, Keys>;
+export type Definitions = { 
+    [K in DefinitionKey]: AllDestinyManifestComponents[K];
+};
 
-export type DefinitionRecord = {
-    key: Keys;
-    value: Definitions[Keys];
+export type DefinitionRecord<K extends DefinitionKey = DefinitionKey> = {
+    key: K;
+    value: Definitions[K];
 };
 
 export const dexie = new Dexie("database") as Dexie & {
