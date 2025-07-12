@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
             throw new Error("Missing authorization code");
         }
         const tokens = await useAuthCode(code);
-        const { destinyMemberships, primaryMembershipId, bungieNetUser } = await getMemberships(tokens.access_token);
+        const { destinyMemberships, primaryMembershipId, bungieNetUser } = await getMemberships(tokens.accessToken);
         const user: User = {
             id: bungieNetUser.membershipId,
             name: bungieNetUser.displayName,
@@ -38,7 +38,6 @@ export async function GET(req: NextRequest) {
         const jwt = sign({ user }, process.env.JWT_SECRET_KEY!, {
             subject: bungieNetUser.membershipId,
             expiresIn: "1h",
-            algorithm: "HS256",
             issuer: "destiny-quest-optimizer"
         });
 
@@ -49,10 +48,10 @@ export async function GET(req: NextRequest) {
         };
 
         const cookieMap = {
-            "access-token": tokens.access_token,
-            "refresh-token": tokens.refresh_token,
-            "access-expires-at": (Date.now() + tokens.expires_in * 1000).toString(),
-            "refresh-expires-at": (Date.now() + tokens.refresh_expires_in * 1000).toString(),
+            "access-token": tokens.accessToken,
+            "access-expires-at": tokens.accessExpiresAt.toString(),
+            "refresh-token": tokens.refreshToken,
+            "refresh-expires-at": tokens.refreshExpiresAt.toString(),
             "dqo-session-token": jwt
         };
 

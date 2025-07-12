@@ -1,54 +1,53 @@
 import { UserMembershipData } from "bungie-api-ts/user";
 
-export type BungieTokenResponse = {
-    token_type: string;
-    access_token: string;
-    expires_in: number;
-    refresh_token: string;
-    refresh_expires_in: number;
-    membership_id: string; // Bungie.net membership ID
-};
-
-// TODO: actually use this function
-export async function useRefreshToken(token: string): Promise<BungieTokenResponse> {
-    const response = await fetch(`https://www.bungie.net/Platform/App/OAuth/token/`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: new URLSearchParams({
-            client_id: process.env.BUNGIE_CLIENT_ID!,
-            client_secret: process.env.BUNGIE_CLIENT_SECRET!,
-            refresh_token: token,
-            grant_type: "refresh_token"
-        })
-    });
-    if (!response.ok) {
-        throw new Error("Bad response from refresh token endpoint");
-    }
-    return response.json();
+export type BungieTokens = {
+    accessToken: string,
+    accessExpiresAt: number,
+    refreshToken: string,
+    refreshExpiresAt: number
 }
 
-export async function useAuthCode(code: string): Promise<BungieTokenResponse> {
+async function getBungieTokens(params: Record<string, string>): Promise<BungieTokens> {
+    const stamp = Date.now();
     const response = await fetch("https://www.bungie.net/Platform/App/OAuth/token/", {
         method: "POST",
         headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
+            "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
             client_id: process.env.BUNGIE_CLIENT_ID!,
             client_secret: process.env.BUNGIE_CLIENT_SECRET!,
-            code,
-            grant_type: "authorization_code"
-        })
+            ...params,
+        }),
     });
     if (!response.ok) {
-        throw new Error("Bad response from token endpoint");
+        throw new Error("Bad response from Bungie OAuth token endpoint");
     }
-    return response.json();
+
+    const data = await response.json();
+    return {
+        accessToken: data.access_token,
+        accessExpiresAt: stamp + data.expires_in * 1000,
+        refreshToken: data.refresh_token,
+        refreshExpiresAt: stamp + data.refresh_expires_in * 1000
+    };
 }
 
+export function useAuthCode(code: string) {
+    return getBungieTokens({ grant_type: "authorization_code", code });
+}
+
+export function useRefreshToken(token: string) {
+    return getBungieTokens({ grant_type: "refresh_token", refresh_token: token });
+}
 export async function fetchWithAuth(token: string, url: string, options: RequestInit = {}) {
+    // TODO: 
+    // - signature should accept BungieTokenResponse (or similar)
+    // - checks access token isn't expired - 5
+    // - checks refresh token isn't expired - 5
+    // - attempts to use refresh token
+    // - errors otherwise
+
     const response = await fetch(url, {
         ...options,
         headers: {
@@ -60,10 +59,11 @@ export async function fetchWithAuth(token: string, url: string, options: Request
     if (!response.ok) {
         throw new Error(`Bad response from fetchWithAuth on ${url}`);
     }
-    return response.json();
+    return response;
 }
 
 export async function getMemberships(token: string): Promise<UserMembershipData> {
-    const data = await fetchWithAuth(token, `https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/`);
+    const response = await fetchWithAuth(token, `https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/`);
+    const data = await response.json();
     return data.Response;
 }

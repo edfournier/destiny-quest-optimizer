@@ -1,4 +1,12 @@
 TODO: add middleware to redirect unauthed users from accessing routes that require auth
+    - should also auto-login if session dectected
+
+TODO: refresh token
+    - fetchWithAuth checks if token is < 5 minutes of expiring
+    - if it is, check if refresh token is < 5 minutes of expiring
+    - if it is, boot to login
+    - any time we successfully use refresh token, need to remint session token
+
 TODO: add error handling, loading, retries for all react queries calls
 TODO: loading components
 TODO: error components

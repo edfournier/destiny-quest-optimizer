@@ -30,20 +30,18 @@ dexie.on("ready", async (vipDB: Dexie) => {
     const vipDexie = vipDB as typeof dexie;
 
     // Check manifest is update to date and IDB isn't corrupted
-    const [manifest, ...checks] = await Promise.all([
+    const [manifest, existingKeys] = await Promise.all([
         getLatestManifest(),
-        ...keys.map(async (key) => {
-            const record = await vipDexie.definitions.get(key);
-            return record !== undefined;
-        })
+        await vipDexie.definitions.toCollection().primaryKeys()
     ]);
     const latestVersion = manifest.jsonWorldContentPaths.en;
     const cachedVersion = localStorage.getItem("manifest-version");
-    if (latestVersion === cachedVersion && checks.every(Boolean)) {
+    if (latestVersion === cachedVersion && keys.every(key => existingKeys.includes(key))) {
         return;
     }
 
     // Refresh IDB with latest definitions
+    console.log("Refreshing IDB...");
     await Promise.all(
         keys.map(async (key) => {
             const path = manifest.jsonWorldComponentContentPaths.en[key];

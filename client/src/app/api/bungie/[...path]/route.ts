@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { fetchWithAuth } from "@/lib/bungie-auth";
+
+// TODO: support POST requests
 
 export async function GET(req: NextRequest) {
     try {
@@ -11,17 +14,10 @@ export async function GET(req: NextRequest) {
         const prefix = "/api/bungie";
         const path = req.nextUrl.pathname.slice(prefix.length);
         const url = base + path + req.nextUrl.search;
-
-        const response = await fetch(url, {
-            method: req.method,
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "X-API-KEY": process.env.BUNGIE_API_KEY!
-            }
-        });
+        const response = await fetchWithAuth(token, url);
         const data = await response.json();
 
-        return NextResponse.json(data, { status: response.status });
+        return NextResponse.json(data);
     } catch (err) {
         console.error(err);
         return NextResponse.json({ message: "Failed to proxy request" }, { status: 500 });
