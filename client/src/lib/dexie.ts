@@ -1,4 +1,4 @@
-import { AllDestinyManifestComponents} from "bungie-api-ts/destiny2";
+import { AllDestinyManifestComponents } from "bungie-api-ts/destiny2";
 import Dexie, { Table } from "dexie";
 import { getLatestManifest } from "./bungie-requests";
 
@@ -9,9 +9,9 @@ export const keys = [
     "DestinyRecordDefinition"
 ] as const;
 
-export type DefinitionKey = typeof keys[number];
+export type DefinitionKey = (typeof keys)[number];
 
-export type Definitions = { 
+export type Definitions = {
     [K in DefinitionKey]: AllDestinyManifestComponents[K];
 };
 
@@ -36,7 +36,7 @@ dexie.on("ready", async (vipDB: Dexie) => {
     ]);
     const latestVersion = manifest.jsonWorldContentPaths.en;
     const cachedVersion = localStorage.getItem("manifest-version");
-    if (latestVersion === cachedVersion && keys.every(key => existingKeys.includes(key))) {
+    if (latestVersion === cachedVersion && keys.every((key) => existingKeys.includes(key))) {
         return;
     }
 

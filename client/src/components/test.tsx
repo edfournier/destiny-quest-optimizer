@@ -13,12 +13,12 @@ export default function Test({ user }: { user: User }) {
     if (profile.isLoading || definitions.isLoading) {
         return <div>Loading...</div>;
     }
-    if (profile.error || definitions.error) {
+    if (!profile.data || !definitions.data || profile.error || definitions.error) {
         return <div>Error: {profile.error?.message || definitions.error?.message}</div>;
     }
 
     console.log(profile.data);
     console.log(definitions.data);
     
-    return <div>{profile.data.Message}</div>;
+    return <div>{profile.data.characterInventories.privacy}</div>;
 }
